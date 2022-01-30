@@ -1,0 +1,102 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# PAcotes
+```{r}
+library(readxl)
+library(esquisse)
+library(ggplot2)
+library(tidyverse)
+```
+
+
+# Fazer gráficos da série histórica de 2015-2019 de:
+# oferta
+# matricula
+# proficiencia lingua portuguesa
+# proficiencia matematica
+# resultados
+
+# Carregar base de dados
+```{r}
+BD_MAT_CATEGORIA <- read_excel("data/BD_SPAECE.xls", 
+                               sheet = "MATRICULAS_CATEGORIA")
+```
+
+```{r}
+BD_SPAECE_CAT <- read_excel("data/BD_SPAECE.xls",
+                            sheet = "SPAECE_CATEGORIA")
+```
+
+```{r}
+BD_MAT_ESCOLAS <- read_excel("data/BD_SPAECE.xls",
+                             sheet = "MATRICULA_ESCOLAS")
+```
+
+```{r}
+BD_SPAECE_ESCOLAS <- read_excel("data/BD_SPAECE.xls",
+                                sheet = "SPAECE_ESCOLAS")
+```
+
+```{r}
+esquisser(BD_MAT_CATEGORIA)
+```
+
+```{r}
+
+BD_MAT_CATEGORIA %>%
+ filter(!(CATEGORIA %in% "INSTITUTO")) %>%
+ ggplot() +
+ aes(x = ANO_CENSO, y = EM_TOTAL, colour = CATEGORIA, group = CATEGORIA) +
+ geom_line(size = 1) +
+ scale_color_hue(direction = 1) +
+ labs(x = "Ano", y = "Matrículas", title = "Evolução de matrículas por categoria de escola 2015-2021") +
+ scale_y_continuous(labels = scales::comma) +
+ theme_minimal()
+```
+
+```{r}
+df %>% 
+  filter(ANO_FIM_EM > 2000 & ANO_FIM_EM < 2018) %>% 
+  ggplot(aes(as.numeric(ANO_FIM_EM))) +
+  geom_histogram(fill = "#e43d6d", color = "black", bins = 10, boundary = 20) +
+  scale_fill_manual(values = swift_red) +
+  labs(x =NULL, y=NULL, title = "Ano de conclusão do Ensino Médio") +
+  scale_x_continuous(breaks = seq(min(df$ANO_FIM_EM, na.rm = TRUE), max(df$ANO_FIM_EM, na.rm = TRUE), by=2)) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5), 
+        panel.background = element_rect(fill = "white"), 
+        panel.grid.minor = element_blank(), 
+        panel.grid.major.y = element_line(size =.1, color= "#f6f4ef"), 
+        panel.border = element_rect(colour = "black", fill = NA), 
+        axis.text.x = element_text(size = 12), 
+        axis.text.y = element_text(size = 12)) +
+  labs(x = NULL, y=NULL, title = "Ano de conclusão do Ensino Médio") 
+```
+
+
+```{r}
+BD_MAT_CATEGORIA %>%
+ filter(!(CATEGORIA %in% c("CEJA", "INSTITUTO", "PROFISSIONAL", "REGULAR", "TEMPO INTEGRAL"
+))) %>%
+ ggplot() +
+  aes(
+    x = ANO_CENSO,
+    y = EM_TOTAL,
+    colour = CATEGORIA,
+    group = CATEGORIA
+  ) +
+  geom_line(size = 0.5) +
+  scale_color_hue(direction = 1) +
+  theme_minimal() +
+  facet_wrap(vars(CATEGORIA))
+```
+
+```{r}
+BD_MAT_CATEGORIA %>%
+  summarise(BD_MAT_CATEGORIA$CATEGORIA, BD_MAT_CATEGORIA$EM_TOTAL)
+```
+
+
